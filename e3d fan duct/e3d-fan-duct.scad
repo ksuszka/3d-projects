@@ -1,11 +1,11 @@
-$fa=12;
+$fa=3;
 $fs=0.2;
 
 radiator_height = 26;
 radiator_diameter = 22;
 radiator_radius = radiator_diameter / 2;
 thin_wall_radius = 1;
-radiator_cut_angle = 60;
+radiator_cut_angle = 65;
 
 //%translate([-22, -19.6, 25.9])
 //    rotate([-90, 0, 0])
@@ -16,10 +16,10 @@ radiator_cut_angle = 60;
 
 // fan mount part
 fan_width = 40;
-fan_wall_thickness = 0.5;
+fan_wall_thickness = 1;
 fan_wall_spacing = 1;
 fan_mount_corner_radius = 3;
-fan_mount_distance_to_center = 27;
+fan_mount_distance_to_center = 35;
 fan_plate_thickness = 1;
 fan_duct_height = fan_width + 2 * fan_wall_thickness + 2 * fan_wall_spacing;
 
@@ -46,6 +46,7 @@ module fan_mount() {
         inner_hull();
     }
 }
+//!fan_mount();
 
 module fan_screws_mold() {
     hole_dia = 4;
@@ -67,7 +68,6 @@ module fan_screws_mold() {
                     }
             }
 }
-
 //!fan_screws_mold();
 
 module fan_mount_outer_hull_mold() {
@@ -81,6 +81,23 @@ module fan_mount_outer_hull_mold() {
     translate([0,0,-100])
         outer_hull();
 }
+//!fan_mount_outer_hull_mold();
+
+module fan_mount_position() {
+    translate([0,-fan_mount_distance_to_center,0])
+        rotate([80,0,0])
+            translate([0,fan_duct_height/2,0])
+                children();
+}
+
+
+module fan_mount_duct_part_mold() {
+    fan_mount_position()
+        translate([0,0,-50+fan_plate_thickness])
+            cube([100,100,100],true);
+}
+//!fan_mount_duct_part_mold();
+
 // A form of a radiator to be cut from other parts
 module radiator_trunk() {
     module holding_ring() {
@@ -97,6 +114,7 @@ module radiator_trunk() {
         holding_ring();
     }
 }
+//!radiator_trunk();
 
 module mounting_plates() {
     width = 44;
@@ -122,7 +140,7 @@ module mounting_plates() {
         //radiator_trunk();
     };
 }
-
+//!mounting_plates();
 
 // A triangle-like shape cut from the front so air output is free
 module radiator_cut_2D() {
@@ -160,7 +178,7 @@ module trunk_2D() {
     mirror([1,0,0]) trunk_half_2D();
 }
 
-module center_column() {
+module holding_arms() {
     linear_extrude(height=26) {
         holding_arms_half_2D();
         mirror([1,0,0]) holding_arms_half_2D();
@@ -171,12 +189,12 @@ module fan_duct_zy_mold() {
     rotate([90,0,90])
         linear_extrude(h=200,center=true)
             polygon([
-                [-100,0],
                 [100,0],
-                [100,26],
-                [0,26],
-                [-fan_mount_distance_to_center,fan_duct_height],
-                [-100,fan_duct_height]]);
+                [100,radiator_height],
+                [0,radiator_height],
+                [-9,radiator_height+1],
+                [-9,100],
+                [-100,0]]);
 }
 
 module fan_duct_trunk() {
@@ -185,11 +203,13 @@ module fan_duct_trunk() {
             intersection() {
                 union() {
                     air_duct_wall_mold();   
-                    center_column();
+                    holding_arms();
                 }
                 //linear_extrude(height=50) trunk_2D();
-                fan_mount_position() fan_mount_outer_hull_mold();
+                //fan_mount_position() fan_mount_outer_hull_mold();
                 fan_duct_zy_mold();
+                fan_mount_duct_part_mold();
+
             }
             fan_mount_position() fan_mount();
         }
@@ -208,56 +228,40 @@ module fan_screws_walls_mold() {
     }
 }
 
-module fan_mount_position() {
-    translate([0,-fan_mount_distance_to_center,21.5]) rotate([90,0,0]) children();
-}
-
 
 module air_duct_mold() {
-    front_bottom_spacing = 0.6;
-    front_diameter = radiator_diameter;
-    back_diameter = fan_width - 2;
-    back_distance = fan_mount_distance_to_center + fan_plate_thickness+1;
-    module cone() {
-        scale = back_diameter/front_diameter;
-        front_center_offset = front_diameter/2 + front_bottom_spacing;
-        back_center_offset = fan_width/2 + fan_wall_thickness + fan_wall_spacing;
-        offset_z_before = (back_center_offset - front_center_offset) /(scale-1);
-        offset_z_after = (front_center_offset*scale - back_center_offset)/(scale-1);
-        
-        translate([0,0,offset_z_after])
-            rotate([90,0,0])
-                linear_extrude(height=back_distance, scale=scale) {
-                    translate([0,offset_z_before])
-                        circle(d=front_diameter);
-                }
+    module back_plate() {
+        fan_mount_position() translate([0,0,1]) cylinder(r=fan_width/2-1, h=0.1, center=true);
     }
-    module zy_mold() {
-        back_height = back_diameter + 1 + fan_wall_thickness + fan_wall_spacing;
-    rotate([90,0,90])
-        linear_extrude(h=200,center=true)
-            polygon([
-                [0,0],
-                [0,radiator_height-9],
-                [-back_distance,back_height],
-                [-100,back_height],
-                [-100,0]]);
+    module front_plate() {
+        translate([-radiator_diameter/2,-radiator_diameter/2,1])
+            cube([radiator_diameter, radiator_diameter/2, radiator_height-2]);
+    }
+    module ideal_duct() {
+        hull() {
+            front_plate();
+            back_plate();
+        }
     }
     intersection() {
-        cone();
-        zy_mold();
+        ideal_duct();
+        rotate([90,0,90])
+        linear_extrude(h=200,center=true)
+            polygon([
+                [100,0],
+                [100,radiator_height-1],
+                [-radiator_diameter/2+1,radiator_height-1],
+                [-100,100],
+                [-100,0]]);
+
     }
 }
 
 module air_duct_wall_mold() {
-    intersection() {
-        minkowski() {
-            air_duct_mold();
-            cube([3,1,3],true);
-        }
-        translate([-50,0,-50])
-        mirror([0,1,0])
-        cube([100,fan_mount_distance_to_center + fan_plate_thickness,100]);
+    minkowski() {
+        air_duct_mold();
+        //cube([4,4,4],true);
+        sphere(r=2);
     }
 }
 
