@@ -3,8 +3,8 @@ beam_size = 15;
 beam_size_half = beam_size/2;
 
 $fn=50;
-// dependency: https://cdn.thingiverse.com/assets/95/99/30/ae/e4/TL-400-0101-001CLR_-_OpenBeam_1515_Extrusion_Clear_Anodized.STL
-//color("green") translate([-beam_size_half,-beam_size,-1000]) import("TL-400-0101-001CLR_-_OpenBeam_1515_Extrusion_Clear_Anodized.stl");
+//dependency:https://cdn.thingiverse.com/assets/95/99/30/ae/e4/TL-400-0101-001CLR_-_OpenBeam_1515_Extrusion_Clear_Anodized.STL
+#color("green") scale([1,1,0.05]) translate([-beam_size_half,-beam_size,-1000]) import(".dependencies/TL-400-0101-001CLR_-_OpenBeam_1515_Extrusion_Clear_Anodized.stl");
 
 opening = 0.4;
 
