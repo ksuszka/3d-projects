@@ -1,5 +1,5 @@
-$fa=3;
-$fs=0.2;
+$fa=12; //3
+$fs=1; //0.2
 
 radiator_height = 26;
 radiator_diameter = 22;
@@ -7,11 +7,9 @@ radiator_radius = radiator_diameter / 2;
 thin_wall_radius = 1;
 radiator_cut_angle = 65;
 
-//%translate([-22, -19.6, 25.9])
-//    rotate([-90, 0, 0])
-//        import("Part1 - E3D_DoubleDuct2.stl");
-//color("green") cylinder(r = radiator_diameter/2, h = radiator_height);
-//%translate([0,0,40]) import("Effector_E3d.stl");
+
+//dependency:https://github.com/jcrocholl/kossel/raw/master/effector.stl
+%translate([0,0,40]) import(".dependencies/effector.stl");
 
 
 // fan mount part
