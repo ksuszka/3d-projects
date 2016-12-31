@@ -4,7 +4,10 @@
  * @param sx - the size of generated model along x axis.
  * @param sy - the size of generated model along y axis.
  * @param base_h - the minimal height of generated model.
- * @param steps - a vector of generation parameters
+ * @param steps - a vector of generation parameters. Each element of that vector adds additional layer of details.
+ *                Single element can be a 2 element vector [s, w] or a single integer "s" (in that case "w" is
+ *                assumed to be 1). "s" sets resolution of the layer, a new random number is used for the height
+ *                every "s" units. "w" sets the weight of the layer.
  * @param seed - random generator seed. If unset then random value is used.
  * @return A 3D block of randomized terrain. 
  */
