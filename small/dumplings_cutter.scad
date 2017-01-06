@@ -2,7 +2,7 @@ draft = false;
 
 show_intersection = false;
 
-form_r = 25;
+form_r = 40;
 flange_width = 5;
 flange_height = 3;
 flange_notches_count = floor(form_r*1.1);
@@ -14,11 +14,20 @@ handle_bottom = 0.99;
 handle_bottom_width = outer_r-inner_r;
 handle_bottom_x = (outer_r+inner_r)/2;
 
-handle_control_points =[[handle_bottom_x,-1000,handle_bottom_width],
-        [handle_bottom_x,0,handle_bottom_width],
-        [handle_bottom_x-15,30,2],
-        [handle_bottom_x-5,48,8]
+function cp25(r,w) = [[r,-1000,w],
+        [r,0,w],
+        [r-15,30,2],
+        [r-5,48,8]
     ];
+
+function cp40(r,w) = [[r,-100,w],
+        [r,1,w],
+        [r-25,35,2],
+        [r-15,47,8]
+    ];
+    
+function cp(r,w) = r<30 ? cp25(r,w) : cp40(r,w);
+handle_control_points = cp(handle_bottom_x, handle_bottom_width);
 
 
 $fs = draft ? 2 : 0.2;
