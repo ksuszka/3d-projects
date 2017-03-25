@@ -37,11 +37,13 @@ translate([0,-19.5, 3]) hull() linear_extrude(height=10) outer_horizontal_bounda
 
 //translate([0,-15,-16]) hull() outer_horizontal_boundary(46.4, 0.9, 0.58, 0.37, 0.26);
 module outline(height=10, type=1) {
-  translate([0,-19.5, -height/2]) hull() linear_extrude(height=height) {
+  translate([0,-20.5, -height/2]) hull() linear_extrude(height=height) {
     if (type == 1) {
       outer_horizontal_boundary(52, 0.04, 0.68, 0.66, 0.45, 0.30);
     } else if (type == 2) {
       outer_horizontal_boundary(52, 0.04, 0.73, 0.81, 0.43, 0.2);
+    } else if (type == 3) {
+      outer_horizontal_boundary(52, 0.03, 0.73, 0.86, 0.44, 0.2);
     }
   }
 }
@@ -61,43 +63,78 @@ module thin_wall() {
     outline(110,type);
   }
 }
+//translate([0,0,40])#outline(1,3);
+module hooks2() {
+  module hook() {
+    radius=40;
+    intersection() {
+      translate([0,radius,0]) {
+        translate([0,0,19]) cylinder(r=radius+1.5,h=4,$fn=120);
+        cylinder(r=radius,h=20,$fn=120); 
+      };
+      cube([10,10,50],true);
+    }
+    intersection() {
+      translate([0,radius,0]) {
+        cylinder(r=radius-0.5,h=23,$fn=120); 
+      };
+      translate([2,0,0]) cube([14,10,50],true);
+    }
+  }
 
-module hook() {
-  radius=40;
-  intersection() {
-    translate([0,radius,0]) {
-      translate([0,0,19]) cylinder(r=radius+1.5,h=4,$fn=120);
-      cylinder(r=radius,h=20,$fn=120); 
-    };
-    cube([10,10,50],true);
-  }
-  intersection() {
-    translate([0,radius,0]) {
-      cylinder(r=radius-0.5,h=23,$fn=120); 
-    };
-    translate([2,0,0]) cube([14,10,50],true);
-  }
-}
-module hooks() {
   for(a=[0:1:1]) {
-    mirror([a,0,0]) translate([17.5,14,0]) color("green")rotate([0,0,112]) hook();
+    mirror([a,0,0]) translate([17.5,13.5,0]) color("green")rotate([0,0,112]) hook();
   }
 
 }
+
+module hooks() {
+  module hook() {
+    radius=40;
+    intersection() {
+      union() {
+        translate([0,radius,0]) {
+          translate([0,0,19]) cylinder(r=radius+2,h=4,$fn=120);
+          cylinder(r=radius,h=20,$fn=120); 
+          translate([0,0,2]) rotate([-4,0,0]) translate([0,-1,-5]) cylinder(r=radius,h=20,$fn=120); 
+        };
+      }
+      rotate([0,0,-30])cube([10,10,50],true);
+    }
+    intersection() {
+      translate([0,radius,0]) {
+        cylinder(r=radius-0.5,h=23,$fn=120); 
+      };
+      translate([2,0,0]) cube([14,10,50],true);
+    }
+  }
+
+  for(a=[0:1:1]) {
+    mirror([a,0,0]) translate([17.5,13.5,0]) color("green")rotate([0,0,112]) hook();
+  }
+
+}
+
 //translate([20,-5,60]) cube([1,29,1],true);
-%translate([50,-19.5,26.5]) rotate([-19,0,0]) translate([0,0,0.5])color("gray") cube([1,100,1],true);
-%translate([50,22.5,0]) rotate([-65,0,0]) translate([0,0,0.5])color("gray") cube([1,100,1],true);
+%translate([50,-20,26.5]) rotate([-19,0,0]) translate([0,0,0.5])color("gray") cube([1,100,1],true);
+%translate([50,22,0]) rotate([-65,0,0]) translate([0,0,0.5])color("gray") cube([1,100,1],true);
 
 module mold() {
   hull() 
   {
-  translate([0,13.63,11.91]) rotate([0,90,0]) cylinder(d=6,h=100,center=true,$fn=36);
+  translate([0,13.13,11.91]) rotate([0,90,0]) cylinder(d=6,h=100,center=true,$fn=36);
 //  translate([0,11,10.1]) rotate([0,90,0]) cylinder(d=10,h=100,center=true,$fn=36);
-  translate([0,-19.5,26.5])rotate([-19,0,0])translate([0,0,-20])cube([100,2,40],true);
-  translate([0,22.5,0])rotate([-65,0,0])translate([0,0,-1])cube([100,20,2],true);
+  translate([0,-20,26.5])rotate([-19,0,0])translate([0,0,-20])cube([100,2,40],true);
+  translate([0,22,0])rotate([-65,0,0])translate([0,0,-1])cube([100,20,2],true);
   }
 }
 //color("red")mold();
+module handle() {
+  hull() {
+  translate([0,0,1]) outline(2,2);
+  translate([0,0,29]) outline(22,3);
+  }
+}
 difference() {
   union() {
 //    intersection() {
@@ -106,8 +143,8 @@ difference() {
 //    }
     color("blue")difference() {
 //      translate([0,0,26+5]) outline(16,2);
-      translate([0,0,20]) outline(40,2);
-      translate([0,0.5,-0.01]) battery_tower();
+      handle();
+      translate([0,0,-0.01]) battery_tower();
     }
   }
   mold();
@@ -115,7 +152,7 @@ difference() {
 }
 //battery_tower();
 
-
+//translate([0,0,50]) hooks();
 
 //translate([0,0,120])color("green")cube([46,1,1],true);
 //translate([0,-18, 50]) hull() outer_horizontal_boundary(50, 0.83, 0.62, 0.37, 0.26);
