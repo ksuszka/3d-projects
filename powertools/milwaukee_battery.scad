@@ -7,6 +7,14 @@ use <BezierScad.scad>;
 // - slope mid point = 14mm
 // - hook lowest edge = 19mm
 
+// Guide lines
+//translate([20,-5,60]) cube([1,29,1],true);
+//%translate([0,5.5,100])color("gray") cube([1,52,1],true);
+//%translate([0,0,100])color("gray") cube([46,1,1],true);
+//%translate([50,-20,26.5]) rotate([-19,0,0]) translate([0,0,0.5])color("gray") cube([1,100,1],true);
+//%translate([50,22,0]) rotate([-65,0,0]) translate([0,0,0.5])color("gray") cube([1,100,1],true);
+
+
 module outer_horizontal_boundary(dim, x0, y0, x1, y1, y2) {
     module half() {
         BezLine([
@@ -24,7 +32,7 @@ module outer_horizontal_boundary(dim, x0, y0, x1, y1, y2) {
 /*
 #color("green") difference() {
 translate([0,-19.5, 3]) hull() linear_extrude(height=10) outer_horizontal_boundary(52, 0.06, 0.72, 0.66, 0.41, 0.30);
-  translate([0,0.5,0]) battery_tower2();
+  translate([0,0.5,0]) battery_tower();
 }
 */
 
@@ -63,7 +71,8 @@ module thin_wall() {
     outline(110,type);
   }
 }
-//translate([0,0,40])#outline(1,3);
+//translate([0,0,40])#outline(1,2);
+
 module hooks2() {
   module hook() {
     radius=40;
@@ -115,26 +124,30 @@ module hooks() {
 
 }
 
-//translate([20,-5,60]) cube([1,29,1],true);
-%translate([50,-20,26.5]) rotate([-19,0,0]) translate([0,0,0.5])color("gray") cube([1,100,1],true);
-%translate([50,22,0]) rotate([-65,0,0]) translate([0,0,0.5])color("gray") cube([1,100,1],true);
-
-module mold() {
-  hull() 
-  {
-  translate([0,13.13,11.91]) rotate([0,90,0]) cylinder(d=6,h=100,center=true,$fn=36);
-//  translate([0,11,10.1]) rotate([0,90,0]) cylinder(d=10,h=100,center=true,$fn=36);
-  translate([0,-20,26.5])rotate([-19,0,0])translate([0,0,-20])cube([100,2,40],true);
-  translate([0,22,0])rotate([-65,0,0])translate([0,0,-1])cube([100,20,2],true);
+module battery_tower_base_negative_mold() {
+  hull() {
+    intersection() {
+      translate([0,-165,-452]) rotate([0,90,0]) cylinder(d=1000,h=100,center=true,$fn=360);
+      translate([0,-11,0])cube([100,50,100],true);
+    }
+    translate([0,13.13,11.91]) rotate([0,90,0]) cylinder(d=6,h=100,center=true,$fn=36);
+    translate([0,22,0])rotate([-65,0,0])translate([0,0,-1])cube([100,20,2],true);
   }
+  translate([0,0,-48.9]) rotate([-2,0,0]) cube([100,100,100],true);
 }
-//color("red")mold();
+//color("red") battery_tower_base_negative_mold(2);
+
 module handle() {
   hull() {
-  translate([0,0,1]) outline(2,2);
-  translate([0,0,29]) outline(22,3);
+    translate([0,0,1]) outline(2,2);
+    translate([0,0,29]) outline(22,3);
+  }
+  hull() {
+//    translate([0,0,38]) outline(10,3);
+//    translate([0,5,70]) cylinder(d=50,h=1);
   }
 }
+
 difference() {
   union() {
 //    intersection() {
@@ -147,7 +160,7 @@ difference() {
       translate([0,0,-0.01]) battery_tower();
     }
   }
-  mold();
+  battery_tower_base_negative_mold();
   hooks();
 }
 //battery_tower();
