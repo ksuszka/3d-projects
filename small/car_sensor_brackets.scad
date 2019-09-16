@@ -21,8 +21,10 @@ module mirror_z() {
 
 
 module switch_bracket() {
-    points1=[[70,35],[70,35+48],[-70,35],[-70,35+48]];
-    holes1=[[70,35],[70,35+37],[-70,35],[-70,35+48]];
+    dist_x=141/2;
+    hook_x=34;
+    points1=[[dist_x,hook_x],[dist_x,hook_x+47.5],[-dist_x,hook_x],[-dist_x,hook_x+47.5]];
+    holes1=[[dist_x,hook_x],[-dist_x,hook_x+36.8],[-dist_x,hook_x],[dist_x,hook_x+47.5]];
     holes2=[[50,0],[0,0],[-50,0]];
     points=concat(points1,holes2);
     module joint(array, i1, i2) {
@@ -74,5 +76,5 @@ module realsense_bracket() {
     }
 }
 
-//switch_bracket();
-realsense_bracket();
+switch_bracket();
+//realsense_bracket();
