@@ -1,4 +1,7 @@
 
+//dependency:http://dkprojects.net/openscad-threads/threads.scad
+include <.dependencies/threads.scad>
+
 FFF=[false,false,false];FFT=[false,false,true];
 FTF=[false,true,false];FTT=[false,true,true];
 TFF=[true,false,false];TFT=[true,false,true];
@@ -76,5 +79,19 @@ module realsense_bracket() {
     }
 }
 
-switch_bracket();
+module cable_gland_25() {
+    difference() {
+        union() {
+            intersection() {
+                cylinder(d=32,h=5,$fn=6);
+                rotate([0,0,30])cylinder(d=36,h=20,center=true,$fn=6);
+            }
+            translate([0,0,5])metric_thread(diameter=24, pitch=1.5, length=15);
+        }
+        cylinder(d=20,h=50,center=true,$fn=72);
+        translate([0,0,])cylinder(d1=20,d2=24,h=10,$fn=72);
+    }
+}
+cable_gland_25();
+//switch_bracket();
 //realsense_bracket();
